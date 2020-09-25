@@ -1,0 +1,16 @@
+{
+  "client_id": "888f8270-09b1-43ad-b2d0-0d92cca1498f",
+  "authorization_user_agent": "DEFAULT",
+  "redirect_uri": "msauth://com.wanggh8.mydrive/3WZx8iZx%2FUvefnQyl4qIMXgCYVA%3D",
+  "account_mode" : "MULTIPLE",
+  "broker_redirect_uri_registered": true,
+  "authorities": [
+    {
+      "type": "AAD",
+      "audience": {
+        "type": "AzureADandPersonalMicrosoftAccount",
+        "tenant_id": "common"
+      }
+    }
+  ]
+}
