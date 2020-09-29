@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
-import com.wanggh8.mydrive.BootApplication;
+import com.wanggh8.mydrive.base.BaseApplication;
 
 import java.lang.reflect.Type;
 
@@ -22,7 +22,7 @@ public class SPManager {
 
     public static SharedPreferences getInstance() {
         if (sharedPreferences == null) {
-            sharedPreferences = BootApplication.getAppContext()
+            sharedPreferences = BaseApplication.getAppContext()
                     .getSharedPreferences("cloudNurse", Context.MODE_PRIVATE);
         }
         return sharedPreferences;

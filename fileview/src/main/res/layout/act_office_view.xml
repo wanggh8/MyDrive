@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <com.wuhenzhizao.titlebar.widget.CommonTitleBar
+        android:id="@+id/titleBar_actKnowledge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:centerText="文件预览"
+        app:centerTextColor="@color/colorMainTextView"
+        app:centerType="textView"
+        app:centerTextSize="16sp"
+        app:fillStatusBar="true"
+        app:leftDrawable="@drawable/ic_back"
+        app:leftDrawablePadding="0dp"
+        app:leftText="返回"
+        app:leftTextColor="@color/colorMainTextView"
+        app:leftTextSize="@dimen/titleTextViewSize"
+        app:leftType="textView"
+        app:statusBarColor="@color/white"
+        app:titleBarColor="@color/white" />
+
+    <com.github.rahatarmanahmed.cpv.CircularProgressView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/progress_view_office"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center"
+        app:cpv_animAutostart="true"
+        app:cpv_indeterminate="true"
+        android:visibility="gone"/>
+
+    <com.wanggh8.fileview.TBSWebView
+        android:id="@+id/webView_office"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"
+        android:scrollbars="none" />
+</LinearLayout>

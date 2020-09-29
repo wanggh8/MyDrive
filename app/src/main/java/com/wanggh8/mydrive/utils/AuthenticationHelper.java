@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 微软 MSAL 认证工具
+ * 微软 MSAL 多用户认证工具
  * 单例类
  *
  * @author wanggh8

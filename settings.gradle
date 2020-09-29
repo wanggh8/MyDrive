@@ -1,2 +1,4 @@
+include ':fileview'
+include ':netcore'
 include ':app'
 rootProject.name = "MyDrive"

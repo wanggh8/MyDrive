@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="268dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_common_title_shape"
+    android:orientation="vertical"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:id="@+id/tv_dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="提示"
+        android:textColor="#333333"
+        android:textSize="@dimen/titleTextViewSize" />
+
+    <TextView
+        android:id="@+id/tv_dialog_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="是否确定此次操作"
+        android:textColor="#333333"
+        android:textSize="@dimen/titleTextViewSize" />
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38dp">
+
+        <TextView
+            android:id="@+id/tv_dialog_left"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="28dp"
+            android:background="@drawable/btn_dialog_left_shape"
+            android:gravity="center"
+            android:text="确定"
+            android:textColor="@color/white"
+            android:textSize="@dimen/contentTextViewSize" />
+
+        <TextView
+            android:id="@+id/tv_dialog_right"
+            android:layout_width="100dp"
+            android:layout_height="32dp"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="center"
+            android:layout_marginRight="28dp"
+            android:background="@drawable/btn_dialog_right_shape"
+            android:gravity="center"
+            android:text="取消"
+            android:textColor="#46CF95"
+            android:textSize="@dimen/contentTextViewSize" />
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_titleBar_right_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tv_wps_open_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:gravity="center"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/colorMainTextView"
+        android:text="打开"
+        android:textSize="@dimen/titleTextViewSize" />
+
+    <ImageView
+        android:id="@+id/iv_wps_open"
+        android:layout_width="21dp"
+        android:layout_height="21dp"
+        android:paddingTop="2dp"
+        android:paddingStart="1dp"
+        android:layout_marginEnd="6dp"
+        android:paddingEnd="5dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_open_wps" />
+
+
+</LinearLayout>

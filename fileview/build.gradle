@@ -1,0 +1,70 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.2"
+
+    defaultConfig {
+        minSdkVersion 23
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    // Swipe Layout侧滑删除与侧滑菜单
+    implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
+    // Eventbus
+    implementation 'org.greenrobot:eventbus:3.2.0'
+    // json对象转换
+    implementation 'com.google.code.gson:gson:2.8.6'
+    // ToastUtils吐司
+    implementation 'com.hjq:toast:8.6'
+    // CommonTitleBar
+    implementation 'com.wuhenzhizao:titlebar:1.2.0'
+    // 进度条
+    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+    // 加载圆形进度
+    implementation 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
+    // 权限请求
+    implementation 'pub.devrel:easypermissions:0.4.3'
+    // Glide图片加载
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    // 网络请求
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation('com.squareup.retrofit2:converter-simplexml:2.9.0') {
+        exclude group: 'xpp3', module: 'xpp3'
+        exclude group: 'stax', module: 'stax-api'
+        exclude group: 'stax', module: 'stax'
+    }
+    // 腾讯浏览服务 tbs
+    implementation 'com.tencent.tbs.tbssdk:sdk:43939'
+
+}
