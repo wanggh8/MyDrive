@@ -1,7 +1,8 @@
 package com.wanggh8.netcore.model;
 
-import com.chinaunicom.ecore.core.net.NetHttpOperater;
-import com.chinaunicom.ecore.core.service.CoreNetService;
+
+import com.wanggh8.netcore.net.NetHttpOperater;
+import com.wanggh8.netcore.service.CoreNetService;
 
 public class CoreNetModel {
 

@@ -1,6 +1,7 @@
 package com.wanggh8.netcore.presenter;
 
-import com.chinaunicom.ecore.core.view.BaseView;
+
+import com.wanggh8.netcore.view.BaseView;
 
 public interface BasePresenter<T extends BaseView> {
 

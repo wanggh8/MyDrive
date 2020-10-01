@@ -3,8 +3,9 @@ package com.wanggh8.netcore.net;
 import android.annotation.SuppressLint;
 import android.text.TextUtils;
 
-import com.chinaunicom.ecore.core.logger.Logger;
-import com.chinaunicom.ecore.core.util.AESUtils;
+
+import com.wanggh8.netcore.logger.Logger;
+import com.wanggh8.netcore.util.AESUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

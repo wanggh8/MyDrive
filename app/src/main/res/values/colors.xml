@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorPrimary">#8AD1F7</color>
+    <color name="colorPrimaryDark">#8AD1F7</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="white">#ffffff</color>
     <color name="colorMainTextView">#333333</color>
+    <color name="colorMainBottomBar">#5fa1f1</color>
+    <color name="colorMainBottomBar1">#3180f2</color>
+
 
 
 </resources>

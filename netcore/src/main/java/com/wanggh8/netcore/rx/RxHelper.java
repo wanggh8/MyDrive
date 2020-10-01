@@ -1,6 +1,6 @@
 package com.wanggh8.netcore.rx;
 
-import com.chinaunicom.ecore.core.bean.JSONBean;
+import com.wanggh8.netcore.bean.JSONBean;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
