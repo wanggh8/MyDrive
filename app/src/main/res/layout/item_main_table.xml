@@ -7,11 +7,10 @@
 
     <ImageView
         android:id="@+id/ivTabIcon"
-        android:layout_width="28dp"
-        android:layout_height="28dp" />
+        android:layout_width="20dp"
+        android:layout_height="20dp" />
 
     <TextView
         android:id="@+id/tvTabTitle"
-        style="@style/MainTabTextView"
-        android:visibility="gone"/>
+        style="@style/MainTabTextView" />
 </LinearLayout>
