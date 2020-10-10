@@ -33,11 +33,10 @@ public class MainActivity extends BaseActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private MainTabViewPagerAdapter mainTabViewPagerAdapter;
-    private CommonTitleBar titleBar;
     // tab信息
     private int[] tabIcons = {R.drawable.selector_bar_main_drive, R.drawable.selector_bar_main_file,
             R.drawable.selector_bar_main_play, R.drawable.selector_bar_main_download, R.drawable.selector_bar_main_personal};
-    private String[] tabNames = {"云盘", "本地", "播放", "下载", "设置"};
+    private String[] tabNames = {"云盘", "本地", "播放", "下载", "我的"};
     // 当前选中的tab
     private int mTabChoice = 0;
     // fragment
@@ -75,7 +74,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initView() {
-        titleBar = findViewById(R.id.title_bar_main);
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
     }
@@ -98,7 +96,6 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mTabChoice = tab.getPosition();
-                titleBar.getCenterTextView().setText(tabNames[mTabChoice]);
             }
 
             @Override

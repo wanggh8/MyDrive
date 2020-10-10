@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3180f2</color>
-    <color name="colorPrimaryDark">#3180f2</color>
+    <color name="colorPrimary">#f8f9fb</color>
+    <color name="colorPrimaryDark">#f8f9fb</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="white">#ffffff</color>
+    <color name="colorMainBackground">#f8f9fb</color>
     <color name="colorMainTextView">#333333</color>
     <color name="colorMainBottomBarSelected">#3180f2</color>
     <color name="colorMainBottomBarUnselected">#777777</color>
+    <color name="colorHintText">#666666</color>
 
 
 

@@ -1,8 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorMainBackground"
+    android:orientation="vertical">
 
+    <com.wuhenzhizao.titlebar.widget.CommonTitleBar
+        android:id="@+id/title_bar_main_personal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:centerText="@string/app_name"
+        app:centerTextColor="@color/colorMainTextView"
+        app:centerType="textView"
+        app:fillStatusBar="true"
+        app:statusBarColor="@color/white"
+        app:titleBarColor="@color/white" />
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_drive_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/hintTextViewSize"
+                android:textColor="@color/colorHintText"
+                android:layout_marginStart="@dimen/settingItemMarginStart"
+                android:layout_marginBottom="@dimen/suit_5"
+                android:text="@string/link"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/white"
+                app:cardElevation="0dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_drive_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/white"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <RelativeLayout
+                        android:id="@+id/rl_drive_setting"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textSize="@dimen/personalSetTextViewSize"
+                            android:layout_marginStart="@dimen/settingItemMarginStart"
+                            android:textColor="@color/colorMainTextView"
+                            android:layout_alignParentStart="true"
+                            android:text="@string/drive"/>
+                        <ImageView
+                            android:layout_width="@dimen/arrowImageSize"
+                            android:layout_height="@dimen/arrowImageSize"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="@dimen/settingItemMarginEnd"
+                            android:src="@drawable/ic_arrow_left"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rl_download_setting"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:textSize="@dimen/personalSetTextViewSize"
+                            android:textColor="@color/colorMainTextView"
+                            android:layout_marginStart="@dimen/settingItemMarginStart"
+                            android:layout_alignParentStart="true"
+                            android:text="@string/download"/>
+
+                        <ImageView
+                            android:layout_width="@dimen/arrowImageSize"
+                            android:layout_height="@dimen/arrowImageSize"
+                            android:layout_alignParentEnd="true"
+                            android:layout_marginEnd="@dimen/settingItemMarginEnd"
+                            android:src="@drawable/ic_arrow_left"/>
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>
