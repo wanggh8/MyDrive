@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_main_personal_titlebar_right_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="horizontal">
 
@@ -12,6 +12,7 @@
         android:layout_height="@dimen/titleBarImgSize"
         android:layout_marginEnd="@dimen/suit_15"
         android:layout_marginTop="@dimen/suit_2"
+        android:layout_marginBottom="@dimen/suit_2"
         android:layout_gravity="center_vertical"
         android:src="@drawable/ic_add">
     </ImageView>

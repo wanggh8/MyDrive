@@ -39,4 +39,5 @@
     <dimen name="arrowImageSize">12dp</dimen>
     <dimen name="titleBarImgSize">19dp</dimen>
     <dimen name="driveImgSize">25dp</dimen>
+    <dimen name="drivePopwinWidth">120dp</dimen>
 </resources>

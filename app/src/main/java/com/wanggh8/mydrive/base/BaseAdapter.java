@@ -68,6 +68,14 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         void onItemLongClick(View view, int position, T bean);
     }
 
+    public void setSimpleOnItemClickListener(ItemClickListener<T> itemClickListener) {
+        this.onItemClickListener = itemClickListener;
+    }
+
+    public void setSimpleOnItemLongClickListener(ItemLongClickListener<T> itemLongClickListener) {
+        this.onItemLongClickListener = itemLongClickListener;
+    }
+
     /* * * * * * * * ViewHolder * * * * * * * */
 
     /**
