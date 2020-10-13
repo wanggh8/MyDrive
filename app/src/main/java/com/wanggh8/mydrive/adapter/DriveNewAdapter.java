@@ -10,25 +10,25 @@ import android.widget.TextView;
 import com.wanggh8.mydrive.R;
 import com.wanggh8.mydrive.base.BaseAdapter;
 import com.wanggh8.mydrive.base.BaseViewHolder;
-import com.wanggh8.mydrive.bean.DriveBean;
+import com.wanggh8.mydrive.bean.DriveNewBean;
 
 import java.util.List;
 
 /**
- * 云盘列表Adapter
+ * 新建云盘列表Adapter
  *
  * @author wanggh8
  * @version V1.0
  * @date 2020/10/10
  */
-public class DriveItemAdapter extends BaseAdapter<DriveBean> {
+public class DriveNewAdapter extends BaseAdapter<DriveNewBean> {
     private int selected = -1;
 
-    public DriveItemAdapter(Context context, List<DriveBean> list) {
+    public DriveNewAdapter(Context context, List<DriveNewBean> list) {
         super(context, list);
     }
 
-    public DriveItemAdapter(Context context) {
+    public DriveNewAdapter(Context context) {
         super(context);
     }
 
@@ -42,11 +42,11 @@ public class DriveItemAdapter extends BaseAdapter<DriveBean> {
     }
 
     @Override
-    public BaseViewHolder<DriveBean> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        return new DriveItemHolder(inflater.inflate(R.layout.item_drive, parent, false));
+    public BaseViewHolder<DriveNewBean> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+        return new DriveItemHolder(inflater.inflate(R.layout.item_drive_new, parent, false));
     }
 
-    class DriveItemHolder extends BaseViewHolder<DriveBean> {
+    class DriveItemHolder extends BaseViewHolder<DriveNewBean> {
 
         private ImageView ivDriveItem;
         private TextView tvDriveItem;
@@ -60,7 +60,7 @@ public class DriveItemAdapter extends BaseAdapter<DriveBean> {
         }
 
         @Override
-        public void onBind(DriveBean bean, int position) {
+        public void onBind(DriveNewBean bean, int position) {
             ivDriveItem.setImageResource(bean.getIconId());
             tvDriveItem.setText(bean.getName());
         }

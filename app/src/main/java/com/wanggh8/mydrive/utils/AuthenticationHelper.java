@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.hjq.toast.ToastUtils;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IMultipleAccountPublicClientApplication;
@@ -26,7 +27,7 @@ import java.util.List;
 public class AuthenticationHelper {
 
     private static AuthenticationHelper mInstance = null;
-    private IMultipleAccountPublicClientApplication mMultipleAccountApp = null;
+    private static IMultipleAccountPublicClientApplication mMultipleAccountApp = null;
 
     // 用户列表
     private List<IAccount> accountList = new ArrayList<>();
@@ -50,14 +51,6 @@ public class AuthenticationHelper {
                     public void onCreated(IMultipleAccountPublicClientApplication application) {
                         mMultipleAccountApp = application;
 
-                        try {
-                            accountList = mMultipleAccountApp.getAccounts();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (MsalException e) {
-                            e.printStackTrace();
-                        }
-                        selectedAccount = accountList.get(0);
                         authority = mMultipleAccountApp.getConfiguration().getDefaultAuthority().getAuthorityURL().toString();
                         listener.onCreated(mInstance);
                     }
@@ -92,9 +85,21 @@ public class AuthenticationHelper {
     public static synchronized AuthenticationHelper getInstance() {
         if (mInstance == null) {
             throw new IllegalStateException(
-                    "AuthenticationHelper has not been initialized from MainActivity");
+                    "AuthenticationHelper has not been initialized");
         }
         return mInstance;
+    }
+    /**
+     * 单例模式获取IMultipleAccountPublicClientApplication实例，不存在则抛出异常
+     *
+     * @return AuthenticationHelper实例
+     */
+    public static IMultipleAccountPublicClientApplication getMultipleAccountApp() {
+        if (mMultipleAccountApp == null) {
+            throw new IllegalStateException(
+                    "AuthenticationHelper has not been initialized");
+        }
+        return mMultipleAccountApp;
     }
 
     /**
@@ -102,7 +107,7 @@ public class AuthenticationHelper {
      *
      * @param listener LoadAccountListListener 获取Account列表回调
      */
-    private void loadAccounts(final LoadAccountListListener listener) {
+    public void loadAccounts(final LoadAccountListListener listener) {
         if (mMultipleAccountApp == null) {
             return;
         }
@@ -111,13 +116,15 @@ public class AuthenticationHelper {
             @Override
             public void onTaskCompleted(final List<IAccount> result) {
                 accountList = result;
-                selectedAccount = accountList.get(0);
                 listener.onSuccess(accountList);
             }
 
             @Override
             public void onError(MsalException exception) {
-                Log.e("MSAL", "Error load the Account list", exception);
+                Log.d("MSAL", "Error load the Account list", exception);
+                if ("".equals(exception.getErrorCode())) {
+                    ToastUtils.show("网络未连接");
+                }
                 listener.onError(exception);
             }
         });
@@ -129,7 +136,6 @@ public class AuthenticationHelper {
     }
 
     public void acquireTokenSilently(AuthenticationCallback callback) {
-        // Get the authority from MSAL config
         mMultipleAccountApp.acquireTokenSilentAsync(mScopes, selectedAccount, authority, callback);
     }
 
@@ -150,6 +156,19 @@ public class AuthenticationHelper {
      */
     public List<IAccount> getAccountList() {
         return accountList;
+    }
+
+    /**
+     * 设置选中用户
+     *
+     * @param account IAccount
+     */
+    public void setSelectedAccount(IAccount account) {
+        if (account != null) {
+            if (accountList.contains(account)) {
+                selectedAccount = account;
+            }
+        }
     }
 
     /**

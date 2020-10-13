@@ -1,15 +1,17 @@
 package com.wanggh8.mydrive.bean;
 
+import com.wanggh8.mydrive.base.BaseJSONBean;
+
 /**
- * 网盘名和类型
+ * 新建网盘名和类型
  * @see com.wanggh8.mydrive.config.DriveType
  *
  * @author wanggh8
  * @version V1.0
- * @date 2020/10/13
+ * @date 2020/10/10
  */
-public class DriveBean {
 
+public class DriveNewBean extends BaseJSONBean {
     // 网盘名
     private String name;
     // 网盘类型
@@ -17,10 +19,10 @@ public class DriveBean {
     // 网盘图标id
     private int iconId;
 
-    public DriveBean() {
+    public DriveNewBean() {
     }
 
-    public DriveBean(String name, String type, int iconId) {
+    public DriveNewBean(String name, String type, int iconId) {
         this.name = name;
         this.type = type;
         this.iconId = iconId;

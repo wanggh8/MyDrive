@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.microsoft.identity.client.IAccount;
+import com.microsoft.identity.client.exception.MsalException;
 import com.wanggh8.mydrive.R;
 import com.wanggh8.mydrive.adapter.MainTabViewPagerAdapter;
 import com.wanggh8.mydrive.base.BaseActivity;
@@ -16,6 +18,7 @@ import com.wanggh8.mydrive.fragment.main.MainDriveFragment;
 import com.wanggh8.mydrive.fragment.main.MainFileFragment;
 import com.wanggh8.mydrive.fragment.main.MainPersonalFragment;
 import com.wanggh8.mydrive.fragment.main.MainPlayFragment;
+import com.wanggh8.mydrive.utils.AuthenticationHelper;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 
 import java.util.ArrayList;
@@ -47,6 +50,10 @@ public class MainActivity extends BaseActivity {
     private MainDownloadFragment mainDownloadFragment;
     private MainPersonalFragment mainPersonalFragment;
 
+    // OneDrive
+    private IAccount mIAccount;
+    private List<IAccount> accountList;
+
 
     @Override
     public int getContentLayout() {
@@ -56,6 +63,31 @@ public class MainActivity extends BaseActivity {
     @Override
     public void beforeInitView() {
         initFragmentList();
+        initMSAL();
+    }
+
+    private void initMSAL() {
+        AuthenticationHelper.setInstance(this, new AuthenticationHelper.IAuthenticationHelperCreatedListener() {
+            @Override
+            public void onCreated(AuthenticationHelper authHelper) {
+                authHelper.loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
+                    @Override
+                    public void onSuccess(List<IAccount> accountList) {
+                        MainActivity.this.accountList = accountList;
+                    }
+
+                    @Override
+                    public void onError(MsalException exception) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+
+            }
+        });
     }
 
     private void initFragmentList() {

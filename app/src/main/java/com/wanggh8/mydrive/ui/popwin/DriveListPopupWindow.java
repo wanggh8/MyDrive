@@ -1,12 +1,7 @@
 package com.wanggh8.mydrive.ui.popwin;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.wanggh8.mydrive.R;
-import com.wanggh8.mydrive.adapter.DriveItemAdapter;
-import com.wanggh8.mydrive.base.BaseAdapter;
-import com.wanggh8.mydrive.bean.DriveBean;
+import com.wanggh8.mydrive.adapter.DriveNewAdapter;
+import com.wanggh8.mydrive.bean.DriveNewBean;
 import com.wanggh8.mydrive.utils.ScreenUtil;
 
 import java.util.List;
@@ -36,7 +30,7 @@ public class DriveListPopupWindow extends PopupWindow {
     private Context context;
     private String selectedStr = "";
     private int selectedPos;
-    private DriveItemAdapter mAdapter;
+    private DriveNewAdapter mAdapter;
 
     public DriveListPopupWindow(Context context) {
         this.context = context;
@@ -49,7 +43,7 @@ public class DriveListPopupWindow extends PopupWindow {
     private void initPopWindow() {
         ViewGroup vgPopupWindow = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.popwin_base, null);
         mRecyclerView = vgPopupWindow.findViewById(R.id.rv_content);
-        mAdapter = new DriveItemAdapter(context);
+        mAdapter = new DriveNewAdapter(context);
         mAdapter.setSimpleOnItemClickListener((position, bean) -> {
             mAdapter.setSelected(position);
             selectedPos = position;
@@ -76,7 +70,7 @@ public class DriveListPopupWindow extends PopupWindow {
      * @param position        设置选中的位置
      * @param OnSelectListener 回调
      */
-    public void showPopWindowAsDropDown(List<DriveBean> itemArray, int position, View parent,int xoff, int yoff, final OnSelectListener OnSelectListener) {
+    public void showPopWindowAsDropDown(List<DriveNewBean> itemArray, int position, View parent, int xoff, int yoff, final OnSelectListener OnSelectListener) {
         selectedPos = position;
         mAdapter.setSelected(selectedPos);
         mAdapter.setCollection(itemArray);

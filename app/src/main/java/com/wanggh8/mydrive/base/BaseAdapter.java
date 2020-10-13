@@ -7,11 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.daimajia.swipe.SwipeLayout;
-import com.daimajia.swipe.implments.SwipeItemRecyclerMangerImpl;
-import com.daimajia.swipe.interfaces.SwipeAdapterInterface;
-import com.daimajia.swipe.interfaces.SwipeItemMangerInterface;
-import com.daimajia.swipe.util.Attributes;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -24,9 +19,8 @@ import java.util.List;
  * @version V1.0
  * @date 2020/9/21
  */
-public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder<T>> implements SwipeItemMangerInterface, SwipeAdapterInterface {
+public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder<T>> {
 
-    public SwipeItemRecyclerMangerImpl mItemManger = new SwipeItemRecyclerMangerImpl(this);
     protected Context context;
     // 数据集
     protected List<T> list;
@@ -215,60 +209,4 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder
         this.notifyDataSetChanged();
     }
 
-    /* * * * * * * * SwipeLayout * * * * * * * */
-
-    @Override
-    public void openItem(int position) {
-        mItemManger.openItem(position);
-    }
-
-    @Override
-    public void closeItem(int position) {
-        mItemManger.closeItem(position);
-    }
-
-    @Override
-    public void closeAllExcept(SwipeLayout layout) {
-        mItemManger.closeAllExcept(layout);
-    }
-
-    @Override
-    public void closeAllItems() {
-        mItemManger.closeAllItems();
-    }
-
-    @Override
-    public List<Integer> getOpenItems() {
-        return mItemManger.getOpenItems();
-    }
-
-    @Override
-    public List<SwipeLayout> getOpenLayouts() {
-        return mItemManger.getOpenLayouts();
-    }
-
-    @Override
-    public void removeShownLayouts(SwipeLayout layout) {
-        mItemManger.removeShownLayouts(layout);
-    }
-
-    @Override
-    public boolean isOpen(int position) {
-        return mItemManger.isOpen(position);
-    }
-
-    @Override
-    public Attributes.Mode getMode() {
-        return mItemManger.getMode();
-    }
-
-    @Override
-    public void setMode(Attributes.Mode mode) {
-        mItemManger.setMode(mode);
-    }
-
-    @Override
-    public int getSwipeLayoutResourceId(int position) {
-        return position;
-    }
 }
