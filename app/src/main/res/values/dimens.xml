@@ -37,6 +37,7 @@
     <dimen name="suit_5">5dp</dimen>
     <dimen name="suit_3">3dp</dimen>
     <dimen name="suit_2">2dp</dimen>
+    <dimen name="suit_2.5">2.5dp</dimen>
     <dimen name="suit_17">17dp</dimen>
     <dimen name="suit_sp_18">18sp</dimen>
     <dimen name="suit_sp_16">16sp</dimen>
@@ -44,7 +45,7 @@
     <dimen name="settingItemMarginStart">20dp</dimen>
     <dimen name="settingItemMarginEnd">18dp</dimen>
     <dimen name="arrowImageSize">12dp</dimen>
-    <dimen name="titleBarImgSize">19dp</dimen>
+    <dimen name="titleBarImgSize">20dp</dimen>
     <dimen name="driveImgSize">25dp</dimen>
     <dimen name="drivePopwinWidth">120dp</dimen>
 </resources>

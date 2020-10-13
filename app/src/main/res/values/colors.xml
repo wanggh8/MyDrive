@@ -12,6 +12,7 @@
     <color name="colorSwipeSetDefault">#c7c7cd</color>
     <color name="colorSwipeEdit">#3689f6</color>
     <color name="colorSwipeSetDelete">#ea4d3e</color>
+    <color name="colorBtnPressed">#d6edfd</color>
 
 
 
