@@ -17,4 +17,15 @@
         app:statusBarColor="@color/white"
         app:titleBarColor="@color/white" />
 
+    <com.andview.refreshview.XRefreshView
+        android:id="@+id/xRefreshView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.yanzhenjie.recyclerview.SwipeRecyclerView
+            android:id="@+id/rv_main_drive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </com.andview.refreshview.XRefreshView>
 </LinearLayout>

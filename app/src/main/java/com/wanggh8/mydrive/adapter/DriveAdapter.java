@@ -52,7 +52,12 @@ public class DriveAdapter extends BaseAdapter<DriveBean> {
         @Override
         public void onBind(DriveBean bean, int position) {
             ivDriveItem.setImageResource(bean.getIconId());
-            tvDriveItem.setText(bean.getName());
+            if (bean.getMyName() != null) {
+                tvDriveItem.setText(bean.getMyName());
+            }
+            else {
+                tvDriveItem.setText(bean.getName());
+            }
         }
     }
 }

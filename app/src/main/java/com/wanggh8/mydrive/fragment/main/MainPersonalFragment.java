@@ -15,7 +15,10 @@ import com.hjq.toast.ToastUtils;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IAuthenticationResult;
+import com.microsoft.identity.client.exception.MsalClientException;
 import com.microsoft.identity.client.exception.MsalException;
+import com.microsoft.identity.client.exception.MsalServiceException;
+import com.microsoft.identity.client.exception.MsalUiRequiredException;
 import com.wanggh8.mydrive.R;
 import com.wanggh8.mydrive.adapter.DriveAdapter;
 import com.wanggh8.mydrive.base.BaseAdapter;
@@ -80,13 +83,22 @@ public class MainPersonalFragment extends BaseFragment {
 
     private void initOneDriveList() {
         driveBeanList.clear();
-        accountList = AuthenticationHelper.getInstance().getAccountList();
-        if (accountList != null && !accountList.isEmpty()) {
-            for (IAccount account : accountList) {
-                driveBeanList.add(new DriveBean(account.getUsername(),
-                        DriveType.oneDrive.getTypeName(),DriveType.oneDrive.getTypeIconId()));
-            }
+        AuthenticationHelper.getInstance().loadDriveList(false);
+        driveBeanList = AuthenticationHelper.getInstance().getDriveBeanList();
+        if (driveAdapter != null) {
+            driveAdapter.setCollection(driveBeanList);
         }
+        AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
+            @Override
+            public void onSuccess(List<IAccount> accounts) {
+                accountList = accounts;
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+
+            }
+        });
     }
 
     private void initNewDriveList() {
@@ -175,41 +187,12 @@ public class MainPersonalFragment extends BaseFragment {
     @Override
     public void bindListener() {
         rightView.setOnClickListener(view -> {
-            // TODO: 2020/10/10 popwin
-
             newDriveListPopwin.showPopWindowAsDropDown(newDriveList, 0, rightView, 0, 5, new DriveListPopupWindow.OnSelectListener() {
                 @Override
                 public void onSelect(String selected, int position) {
                     switch (selected) {
                         case "OneDrive":
-                            AuthenticationHelper.getInstance().acquireTokenInteractively(getActivity(), new AuthenticationCallback() {
-                                @Override
-                                public void onCancel() {
-
-                                }
-
-                                @Override
-                                public void onSuccess(IAuthenticationResult authenticationResult) {
-                                    AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
-                                        @Override
-                                        public void onSuccess(List<IAccount> accountList) {
-                                            initOneDriveList();
-                                        }
-
-                                        @Override
-                                        public void onError(MsalException exception) {
-                                        }
-                                    });
-                                }
-
-                                @Override
-                                public void onError(MsalException exception) {
-                                    if ("device_network_not_available".equals(exception.getErrorCode())) {
-                                        ToastUtils.show(getString(R.string.device_network_not_available));
-                                    }
-                                    Log.e(TAG, "onError: MSAL acquireTokenInteractively", exception);
-                                }
-                            });
+                            oneDriveSignIn();
                             break;
                         case "Google Drive":
                             ToastUtils.show("暂未支持");
@@ -227,6 +210,25 @@ public class MainPersonalFragment extends BaseFragment {
         driveAdapter.setSimpleOnItemClickListener((position, bean) -> {
             ToastUtils.show(bean.getName());
         });
+    }
+
+    private void oneDriveSignIn() {
+        AuthenticationHelper.getInstance().acquireTokenInteractively(getActivity(), new AuthenticationHelper.AcquireTokenCallback() {
+            @Override
+            public void onSuccess(IAuthenticationResult authenticationResult) {
+                AuthenticationHelper.getInstance().setIAuthenticationResult(authenticationResult);
+                AuthenticationHelper.getInstance().loadDriveList(true);
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+
+            }
+        });
+    }
+
+    private void oneDriveSignOut(IAccount account) throws MsalException, InterruptedException {
+        AuthenticationHelper.getInstance().removeAccount(account);
     }
 
     @Override

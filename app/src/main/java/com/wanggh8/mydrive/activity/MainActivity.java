@@ -62,25 +62,15 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void beforeInitView() {
-        initFragmentList();
         initMSAL();
+        initFragmentList();
     }
 
     private void initMSAL() {
         AuthenticationHelper.setInstance(this, new AuthenticationHelper.IAuthenticationHelperCreatedListener() {
             @Override
             public void onCreated(AuthenticationHelper authHelper) {
-                authHelper.loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
-                    @Override
-                    public void onSuccess(List<IAccount> accountList) {
-                        MainActivity.this.accountList = accountList;
-                    }
 
-                    @Override
-                    public void onError(MsalException exception) {
-
-                    }
-                });
             }
 
             @Override
