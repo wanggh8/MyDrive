@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.hjq.toast.ToastUtils;
 import com.microsoft.graph.models.extensions.Drive;
 import com.microsoft.identity.client.AuthenticationCallback;
@@ -129,6 +131,9 @@ public class AuthenticationHelper {
             @Override
             public void onTaskCompleted(final List<IAccount> result) {
                 accountList = result;
+                for (IAccount account : accountList) {
+                    SPManager.putObject(account.getId(), account);
+                }
                 listener.onSuccess(accountList);
             }
 
@@ -144,35 +149,16 @@ public class AuthenticationHelper {
     }
 
     /**
-     * 加载网盘列表
+     * 从本地加载网盘列表
      *
-     * @param getFormNet 是否调用网络接口重新获取，否则加载本地数据库
      */
-    public void loadDriveList(boolean getFormNet) {
+    public void loadDriveList() {
         driveBeanList.clear();
-        if (!getFormNet) {
-            driveBeanList = DriveDBUtil.queryAll();
-        } else {
-            loadAccounts(new LoadAccountListListener() {
-                @Override
-                public void onSuccess(List<IAccount> accountList) {
-                    for (IAccount account : accountList) {
-                        DriveBean bean = setDriveBean(account);
-                        driveBeanList.add(bean);
-                        DriveDBUtil.update(bean);
-                    }
-                }
-
-                @Override
-                public void onError(MsalException exception) {
-
-                }
-            });
-        }
+        driveBeanList = DriveDBUtil.queryAll();
     }
 
 
-    private DriveBean setDriveBean(IAccount account) {
+    public DriveBean setDriveBean(IAccount account) {
         DriveBean driveBean = new DriveBean();
         driveBean.setName(account.getUsername());
         driveBean.setType(DriveType.oneDrive.getTypeName());
@@ -271,14 +257,27 @@ public class AuthenticationHelper {
     /**
      * 删除用户
      *
-     * @param account IAccount
-     * @return
-     * @throws MsalException
-     * @throws InterruptedException
+     * @param id
+     * @param callback
      */
-    public boolean removeAccount(IAccount account) throws MsalException, InterruptedException {
-        mMultipleAccountApp.removeAccount(account);
-        return true;
+    public void removeAccount(String id, IMultipleAccountPublicClientApplication.RemoveAccountCallback callback)  {
+        mMultipleAccountApp.getAccount(id, new IMultipleAccountPublicClientApplication.GetAccountCallback() {
+            @Override
+            public void onTaskCompleted(IAccount result) {
+                mMultipleAccountApp.removeAccount(result, callback);
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+                if ("device_network_not_available".equals(exception.getErrorCode())) {
+                    ToastUtils.show("网络未连接");
+                }
+                else {
+                    ToastUtils.show("失败");
+                }
+            }
+        });
+
     }
 
     /**
@@ -293,6 +292,7 @@ public class AuthenticationHelper {
 
     /**
      * 根据索引获取当前账户
+     * 可获取当前内存中和sp中的IAccount
      *
      * @param id 网盘用户唯一索引id
      * @return IAccount
@@ -302,6 +302,10 @@ public class AuthenticationHelper {
             if (id.equals(account.getId())) {
                 return account;
             }
+        }
+        IAccount spAccount = SPManager.getObject(id, IAccount.class);
+        if (spAccount != null) {
+            return spAccount;
         }
         return null;
     }

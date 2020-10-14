@@ -8,6 +8,7 @@ import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import com.hjq.toast.ToastUtils;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IAuthenticationResult;
+import com.microsoft.identity.client.IMultipleAccountPublicClientApplication;
 import com.microsoft.identity.client.exception.MsalClientException;
 import com.microsoft.identity.client.exception.MsalException;
 import com.microsoft.identity.client.exception.MsalServiceException;
@@ -28,6 +30,7 @@ import com.wanggh8.mydrive.bean.DriveNewBean;
 import com.wanggh8.mydrive.config.DriveType;
 import com.wanggh8.mydrive.ui.popwin.DriveListPopupWindow;
 import com.wanggh8.mydrive.utils.AuthenticationHelper;
+import com.wanggh8.mydrive.utils.DriveDBUtil;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener;
 import com.yanzhenjie.recyclerview.SwipeMenu;
@@ -83,7 +86,7 @@ public class MainPersonalFragment extends BaseFragment {
 
     private void initOneDriveList() {
         driveBeanList.clear();
-        AuthenticationHelper.getInstance().loadDriveList(false);
+        AuthenticationHelper.getInstance().loadDriveList();
         driveBeanList = AuthenticationHelper.getInstance().getDriveBeanList();
         if (driveAdapter != null) {
             driveAdapter.setCollection(driveBeanList);
@@ -135,12 +138,12 @@ public class MainPersonalFragment extends BaseFragment {
                 // 3. WRAP_CONTENT，自身高度，不推荐;
                 int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
-                SwipeMenuItem setDefaultItem = new SwipeMenuItem(mContext)
-                        .setWidth(width)
-                        .setHeight(height)
-                        .setBackground(R.color.colorSwipeSetDefault)
-                        .setText(R.string.setDefault);
-                rightMenu.addMenuItem(setDefaultItem);
+//                SwipeMenuItem setDefaultItem = new SwipeMenuItem(mContext)
+//                        .setWidth(width)
+//                        .setHeight(height)
+//                        .setBackground(R.color.colorSwipeSetDefault)
+//                        .setText(R.string.setDefault);
+//                rightMenu.addMenuItem(setDefaultItem);
 
                 SwipeMenuItem editItem = new SwipeMenuItem(mContext)
                         .setWidth(width)
@@ -172,8 +175,16 @@ public class MainPersonalFragment extends BaseFragment {
                 int menuPosition = menuBridge.getPosition();
 
                 if (direction == SwipeRecyclerView.RIGHT_DIRECTION) {
+                    Log.d(TAG, "onItemClick: " + menuPosition);
+                    if (menuPosition == 0) {
 
-                } else if (direction == SwipeRecyclerView.LEFT_DIRECTION) {
+                    } else if (menuPosition == 1) {
+                        ToastUtils.show(adapterPosition);
+                        ToastUtils.show(driveAdapter.getItem(adapterPosition).getId());
+                        oneDriveSignOut(driveAdapter.getItem(adapterPosition).getId());
+                    }
+                }
+                if (direction == SwipeRecyclerView.LEFT_DIRECTION) {
 
                 }
             }
@@ -217,7 +228,7 @@ public class MainPersonalFragment extends BaseFragment {
             @Override
             public void onSuccess(IAuthenticationResult authenticationResult) {
                 AuthenticationHelper.getInstance().setIAuthenticationResult(authenticationResult);
-                AuthenticationHelper.getInstance().loadDriveList(true);
+                loadAccountFormNet();
             }
 
             @Override
@@ -227,8 +238,46 @@ public class MainPersonalFragment extends BaseFragment {
         });
     }
 
-    private void oneDriveSignOut(IAccount account) throws MsalException, InterruptedException {
-        AuthenticationHelper.getInstance().removeAccount(account);
+    private void loadAccountFormNet() {
+        AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
+            @Override
+            public void onSuccess(List<IAccount> accountList) {
+                driveBeanList.clear();
+                for (IAccount account : accountList) {
+                    DriveBean bean = AuthenticationHelper.getInstance().setDriveBean(account);
+                    driveBeanList.add(bean);
+                    DriveDBUtil.update(bean);
+                }
+                initOneDriveList();
+            }
+
+            @Override
+            public void onError(MsalException exception) {
+
+            }
+        });
+    }
+
+    private void oneDriveSignOut(String id) {
+
+        AuthenticationHelper.getInstance().removeAccount(id, new IMultipleAccountPublicClientApplication.RemoveAccountCallback() {
+            @Override
+            public void onRemoved() {
+                ToastUtils.show("删除");
+                DriveDBUtil.deleteById(id);
+                loadAccountFormNet();
+                ToastUtils.show("删除用户成功");
+            }
+
+            @Override
+            public void onError(@NonNull MsalException exception) {
+                if ("device_network_not_available".equals(exception.getErrorCode())) {
+                    ToastUtils.show("网络未连接");
+                }
+                ToastUtils.show("失败");
+                Log.d(TAG, "onError: "+ exception.getMessage());
+            }
+        });
     }
 
     @Override

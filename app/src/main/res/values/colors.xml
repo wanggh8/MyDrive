@@ -9,8 +9,8 @@
     <color name="colorMainBottomBarSelected">#3180f2</color>
     <color name="colorMainBottomBarUnselected">#777777</color>
     <color name="colorHintText">#666666</color>
-    <color name="colorSwipeSetDefault">#c7c7cd</color>
-    <color name="colorSwipeEdit">#3689f6</color>
+    <color name="colorSwipeSetDefault">#3689f6</color>
+    <color name="colorSwipeEdit">#c7c7cd</color>
     <color name="colorSwipeSetDelete">#ea4d3e</color>
     <color name="colorBtnPressed">#d6edfd</color>
 

@@ -28,6 +28,8 @@ import com.wanggh8.mydrive.bean.DriveNewBean;
 import com.wanggh8.mydrive.config.DriveType;
 import com.wanggh8.mydrive.ui.popwin.DriveListPopupWindow;
 import com.wanggh8.mydrive.utils.AuthenticationHelper;
+import com.wanggh8.mydrive.utils.DriveDBUtil;
+import com.wanggh8.mydrive.utils.SPManager;
 import com.wuhenzhizao.titlebar.widget.CommonTitleBar;
 import com.yanzhenjie.recyclerview.OnItemMenuClickListener;
 import com.yanzhenjie.recyclerview.SwipeMenu;
@@ -83,24 +85,23 @@ public class MainDriveFragment extends BaseFragment {
     }
 
     private void initOneDriveList() {
-
         driveBeanList.clear();
-        AuthenticationHelper.getInstance().loadDriveList(false);
+        AuthenticationHelper.getInstance().loadDriveList();
         driveBeanList = AuthenticationHelper.getInstance().getDriveBeanList();
         if (driveAdapter != null) {
             driveAdapter.setCollection(driveBeanList);
         }
-        AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
-            @Override
-            public void onSuccess(List<IAccount> accounts) {
-                accountList = accounts;
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-
-            }
-        });
+//        AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
+//            @Override
+//            public void onSuccess(List<IAccount> accounts) {
+//                accountList = accounts;
+//            }
+//
+//            @Override
+//            public void onError(MsalException exception) {
+//
+//            }
+//        });
     }
 
     private void initNewDriveList() {
@@ -115,6 +116,8 @@ public class MainDriveFragment extends BaseFragment {
     @Override
     public void initView() {
         xRefreshView = (XRefreshView) findViewById(R.id.xRefreshView);
+        xRefreshView.setPullLoadEnable(false);
+        xRefreshView.setPullRefreshEnable(true);
         rvDriveList = (SwipeRecyclerView) findViewById(R.id.rv_main_drive);
 
         titleBar = (CommonTitleBar) findViewById(R.id.title_bar_main_drive);
@@ -218,6 +221,44 @@ public class MainDriveFragment extends BaseFragment {
         driveAdapter.setSimpleOnItemClickListener((position, bean) -> {
             ToastUtils.show(bean.getName());
         });
+
+        xRefreshView.setXRefreshViewListener(new XRefreshView.SimpleXRefreshListener() {
+            @Override
+            public void onRefresh(boolean isPullDown) {
+                reset(false);
+                AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
+                    @Override
+                    public void onSuccess(List<IAccount> accountList) {
+                        driveBeanList.clear();
+                        for (IAccount account : accountList) {
+                            DriveBean bean = AuthenticationHelper.getInstance().setDriveBean(account);
+                            driveBeanList.add(bean);
+                            DriveDBUtil.update(bean);
+                        }
+                        initOneDriveList();
+                        xRefreshView.stopRefresh();
+                    }
+
+                    @Override
+                    public void onError(MsalException exception) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onLoadMore(boolean isSilence) {
+                super.onLoadMore(isSilence);
+            }
+        });
+    }
+
+    private void reset(boolean clearData) {
+        xRefreshView.setPullLoadEnable(false);
+        xRefreshView.setLoadComplete(false);
+        if (clearData) {
+            driveAdapter.setCollection(null);
+        }
     }
 
     private void oneDriveSignIn() {
@@ -228,6 +269,12 @@ public class MainDriveFragment extends BaseFragment {
                 AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
                     @Override
                     public void onSuccess(List<IAccount> accountList) {
+                        driveBeanList.clear();
+                        for (IAccount account : accountList) {
+                            DriveBean bean = AuthenticationHelper.getInstance().setDriveBean(account);
+                            driveBeanList.add(bean);
+                            DriveDBUtil.update(bean);
+                        }
                         initOneDriveList();
                     }
 
@@ -242,6 +289,7 @@ public class MainDriveFragment extends BaseFragment {
 
             }
         });
+
     }
 
     private void oneDriveSignOut() {
