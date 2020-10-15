@@ -273,7 +273,7 @@ public class AuthenticationHelper {
                     ToastUtils.show("网络未连接");
                 }
                 else {
-                    ToastUtils.show("失败");
+                    ToastUtils.show("获取用户失败");
                 }
             }
         });

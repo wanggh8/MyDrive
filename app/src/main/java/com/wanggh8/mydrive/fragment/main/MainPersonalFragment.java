@@ -2,6 +2,7 @@ package com.wanggh8.mydrive.fragment.main;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Adapter;
@@ -38,6 +39,7 @@ import com.yanzhenjie.recyclerview.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
+import com.yanzhenjie.recyclerview.touch.OnItemStateChangedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -179,8 +181,6 @@ public class MainPersonalFragment extends BaseFragment {
                     if (menuPosition == 0) {
 
                     } else if (menuPosition == 1) {
-                        ToastUtils.show(adapterPosition);
-                        ToastUtils.show(driveAdapter.getItem(adapterPosition).getId());
                         oneDriveSignOut(driveAdapter.getItem(adapterPosition).getId());
                     }
                 }
@@ -189,6 +189,7 @@ public class MainPersonalFragment extends BaseFragment {
                 }
             }
         });
+        
         driveAdapter = new DriveAdapter(mContext);
         rvDriveList.setLayoutManager(new LinearLayoutManager(mContext));
         driveAdapter.setCollection(driveBeanList);
@@ -266,15 +267,16 @@ public class MainPersonalFragment extends BaseFragment {
                 ToastUtils.show("删除");
                 DriveDBUtil.deleteById(id);
                 loadAccountFormNet();
-                ToastUtils.show("删除用户成功");
+                ToastUtils.show("删除成功");
             }
 
             @Override
             public void onError(@NonNull MsalException exception) {
                 if ("device_network_not_available".equals(exception.getErrorCode())) {
                     ToastUtils.show("网络未连接");
+                } else {
+                    ToastUtils.show("删除失败");
                 }
-                ToastUtils.show("失败");
                 Log.d(TAG, "onError: "+ exception.getMessage());
             }
         });
