@@ -141,13 +141,6 @@ public class MainDriveFragment extends BaseFragment {
                 // 3. WRAP_CONTENT，自身高度，不推荐;
                 int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
-                SwipeMenuItem setDefaultItem = new SwipeMenuItem(mContext)
-                        .setWidth(width)
-                        .setHeight(height)
-                        .setBackground(R.color.colorSwipeSetDefault)
-                        .setText(R.string.setDefault);
-                rightMenu.addMenuItem(setDefaultItem);
-
                 SwipeMenuItem editItem = new SwipeMenuItem(mContext)
                         .setWidth(width)
                         .setHeight(height)
@@ -155,12 +148,26 @@ public class MainDriveFragment extends BaseFragment {
                         .setText(R.string.edit);
                 rightMenu.addMenuItem(editItem);
 
-                SwipeMenuItem deleteItem = new SwipeMenuItem(mContext)
-                        .setWidth(width)
-                        .setHeight(height)
-                        .setBackground(R.color.colorSwipeSetDelete)
-                        .setText(R.string.delete);
-                rightMenu.addMenuItem(deleteItem);
+//                SwipeMenuItem setDefaultItem = new SwipeMenuItem(mContext)
+//                        .setWidth(width)
+//                        .setHeight(height)
+//                        .setBackground(R.color.colorSwipeSetDefault)
+//                        .setText(R.string.setDefault);
+//                rightMenu.addMenuItem(setDefaultItem);
+//
+//                SwipeMenuItem editItem = new SwipeMenuItem(mContext)
+//                        .setWidth(width)
+//                        .setHeight(height)
+//                        .setBackground(R.color.colorSwipeEdit)
+//                        .setText(R.string.edit);
+//                rightMenu.addMenuItem(editItem);
+//
+//                SwipeMenuItem deleteItem = new SwipeMenuItem(mContext)
+//                        .setWidth(width)
+//                        .setHeight(height)
+//                        .setBackground(R.color.colorSwipeSetDelete)
+//                        .setText(R.string.delete);
+//                rightMenu.addMenuItem(deleteItem);
             }
         };
         rvDriveList.setAdapter(null);
@@ -184,11 +191,15 @@ public class MainDriveFragment extends BaseFragment {
                 }
             }
         });
+
         driveAdapter = new DriveAdapter(mContext);
         rvDriveList.setLayoutManager(new LinearLayoutManager(mContext));
         rvDriveList.setAdapter(driveAdapter);
         driveAdapter.setCollection(driveBeanList);
+
+
     }
+
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

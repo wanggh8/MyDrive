@@ -35,6 +35,13 @@ import java.util.List;
  */
 public class AuthenticationHelper {
 
+    // 错误代码
+    public static int OTHER_ERROR = 0;
+    public static int NETWORK_NOT_AVAILABLE = 1;
+    public static int NO_CURRENT_ACCOUNT = 2;
+    public static int Client_ERROR = 3;
+    public static int SERVICE_ERROR = 4;
+
     private static AuthenticationHelper INSTANCE = null;
     private static IMultipleAccountPublicClientApplication mMultipleAccountApp = null;
 
@@ -140,9 +147,7 @@ public class AuthenticationHelper {
             @Override
             public void onError(MsalException exception) {
                 Log.d("MSAL", "Error load the Account list", exception);
-                if ("".equals(exception.getErrorCode())) {
-                    ToastUtils.show("网络未连接");
-                }
+                onDealError(exception, true);
                 listener.onError(exception);
             }
         });
@@ -189,21 +194,7 @@ public class AuthenticationHelper {
 
             @Override
             public void onError(MsalException exception) {
-                if (exception instanceof MsalClientException) {
-                    if ("device_network_not_available".equals(exception.getErrorCode())) {
-                        ToastUtils.show("网络未连接");
-                    } else if (exception.getErrorCode() == "no_current_account") {
-                        Log.d("AUTH", "No current account, interactive login required");
-                        // 静默登陆时需要重新显式登陆doInteractiveSignIn();
-                        // doInteractiveSignIn();
-                    } else {
-                        // Exception inside MSAL, more info inside MsalError.java
-                        Log.e("AUTH", "Client error authenticating", exception);
-                    }
-                } else if (exception instanceof MsalServiceException) {
-                    // Exception when communicating with the auth server, likely config issue
-                    Log.e("AUTH", "Service error authenticating", exception);
-                }
+                onDealError(exception, true);
                 callback.onError(exception);
             }
         });
@@ -269,6 +260,7 @@ public class AuthenticationHelper {
 
             @Override
             public void onError(MsalException exception) {
+
                 if ("device_network_not_available".equals(exception.getErrorCode())) {
                     ToastUtils.show("网络未连接");
                 }
@@ -308,6 +300,16 @@ public class AuthenticationHelper {
             return spAccount;
         }
         return null;
+    }
+
+    /**
+     * 网络请求根据索引获取当前账户
+     *
+     * @param id 网盘用户唯一索引id
+     * @param callback IMultipleAccountPublicClientApplication.GetAccountCallback
+     */
+    public void getAccountByIdFromNet(String id, IMultipleAccountPublicClientApplication.GetAccountCallback callback) {
+        mMultipleAccountApp.getAccount(id, callback);
     }
 
     /**
@@ -356,6 +358,55 @@ public class AuthenticationHelper {
     }
 
 
+    /**
+     * 网络请求失败处理
+     *
+     * @param exception MsalException
+     * @param isToast 是否显示Toast
+     * @return 错误代码
+     * @see AuthenticationHelper
+     */
+    public static int onDealError(MsalException exception, boolean isToast) {
+        if (!isToast) {
+            if (exception instanceof MsalClientException) {
+                if ("device_network_not_available".equals(exception.getErrorCode())) {
+                    ToastUtils.show("网络未连接");
+                    return NETWORK_NOT_AVAILABLE;
+                } else if (exception.getErrorCode() == "no_current_account") {
+                    Log.d("AUTH", "No current account, interactive login required");
+                    // 静默登陆时需要重新显式登陆doInteractiveSignIn();
+                    // doInteractiveSignIn();
+                    return NO_CURRENT_ACCOUNT;
+                } else {
+                    // Exception inside MSAL, more info inside MsalError.java
+                    Log.e("AUTH", "Client error authenticating", exception);
+                    return Client_ERROR;
+                }
+            } else if (exception instanceof MsalServiceException) {
+                // Exception when communicating with the auth server, likely config issue
+                Log.e("AUTH", "Service error authenticating", exception);
+                return SERVICE_ERROR;
+            }
+        }
+        else {
+            if (exception instanceof MsalClientException) {
+                if ("device_network_not_available".equals(exception.getErrorCode())) {
+                    return NETWORK_NOT_AVAILABLE;
+                } else if (exception.getErrorCode() == "no_current_account") {
+                    Log.d("AUTH", "No current account, interactive login required");
+                    return NO_CURRENT_ACCOUNT;
+                } else {
+                    Log.e("AUTH", "Client error authenticating", exception);
+                    return Client_ERROR;
+                }
+            } else if (exception instanceof MsalServiceException) {
+                Log.e("AUTH", "Service error authenticating", exception);
+                return SERVICE_ERROR;
+            }
+        }
+        return OTHER_ERROR;
+    }
+
 
     /**
      * 创建多帐户公共客户端应用监听
@@ -395,6 +446,7 @@ public class AuthenticationHelper {
 
         void onError(final MsalException exception);
     }
+
 
 }
 

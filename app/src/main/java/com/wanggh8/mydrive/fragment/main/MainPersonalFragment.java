@@ -189,7 +189,7 @@ public class MainPersonalFragment extends BaseFragment {
                 }
             }
         });
-        
+
         driveAdapter = new DriveAdapter(mContext);
         rvDriveList.setLayoutManager(new LinearLayoutManager(mContext));
         driveAdapter.setCollection(driveBeanList);
