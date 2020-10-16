@@ -2,33 +2,27 @@ package com.wanggh8.mydrive.fragment.main;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.hjq.toast.ToastUtils;
-import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IAuthenticationResult;
 import com.microsoft.identity.client.IMultipleAccountPublicClientApplication;
-import com.microsoft.identity.client.exception.MsalClientException;
 import com.microsoft.identity.client.exception.MsalException;
-import com.microsoft.identity.client.exception.MsalServiceException;
-import com.microsoft.identity.client.exception.MsalUiRequiredException;
 import com.wanggh8.mydrive.R;
 import com.wanggh8.mydrive.adapter.DriveAdapter;
-import com.wanggh8.mydrive.base.BaseAdapter;
 import com.wanggh8.mydrive.base.BaseFragment;
 import com.wanggh8.mydrive.bean.DriveBean;
 import com.wanggh8.mydrive.bean.DriveNewBean;
 import com.wanggh8.mydrive.config.DriveType;
+import com.wanggh8.mydrive.contract.AuthenticationContract;
+import com.wanggh8.mydrive.presenter.AuthenticationPresenter;
 import com.wanggh8.mydrive.ui.popwin.DriveListPopupWindow;
 import com.wanggh8.mydrive.utils.AuthenticationHelper;
 import com.wanggh8.mydrive.utils.DriveDBUtil;
@@ -39,7 +33,6 @@ import com.yanzhenjie.recyclerview.SwipeMenuBridge;
 import com.yanzhenjie.recyclerview.SwipeMenuCreator;
 import com.yanzhenjie.recyclerview.SwipeMenuItem;
 import com.yanzhenjie.recyclerview.SwipeRecyclerView;
-import com.yanzhenjie.recyclerview.touch.OnItemStateChangedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +45,7 @@ import java.util.List;
  * @version V1.0
  * @date 2020/9/30
  */
-public class MainPersonalFragment extends BaseFragment {
+public class MainPersonalFragment extends BaseFragment implements AuthenticationContract.View{
 
     // titlebar
     private CommonTitleBar titleBar;
@@ -75,6 +68,8 @@ public class MainPersonalFragment extends BaseFragment {
     // 已连接网盘列表
     private List<DriveBean> driveBeanList = new ArrayList<>();
 
+    private AuthenticationContract.Presenter msalPresenter;
+
     @Override
     public int getContentLayout() {
         return R.layout.fragment_main_personal;
@@ -82,6 +77,7 @@ public class MainPersonalFragment extends BaseFragment {
 
     @Override
     public void beforeInitView() {
+        msalPresenter = new AuthenticationPresenter(mContext, this);
         initNewDriveList();
         initOneDriveList();
     }
@@ -284,6 +280,56 @@ public class MainPersonalFragment extends BaseFragment {
 
     @Override
     public void onClickEvent(View v) {
+
+    }
+
+    @Override
+    public void getDriveListSuccess() {
+
+    }
+
+    @Override
+    public void getDriveListFail() {
+
+    }
+
+    @Override
+    public void getAccountListSuccess() {
+
+    }
+
+    @Override
+    public void getAccountListFail() {
+
+    }
+
+    @Override
+    public void getAccountByIdSuccess() {
+
+    }
+
+    @Override
+    public void getAccountByIdFail() {
+
+    }
+
+    @Override
+    public void addAccountSuccess() {
+
+    }
+
+    @Override
+    public void addAccountFail() {
+
+    }
+
+    @Override
+    public void removeAccountSuccess() {
+
+    }
+
+    @Override
+    public void removeAccountFail() {
 
     }
 }

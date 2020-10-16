@@ -8,7 +8,9 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.hjq.toast.ToastUtils;
 import com.microsoft.identity.client.IAccount;
+import com.microsoft.identity.client.IMultipleAccountPublicClientApplication;
 import com.microsoft.identity.client.exception.MsalException;
 import com.wanggh8.mydrive.R;
 import com.wanggh8.mydrive.adapter.MainTabViewPagerAdapter;
@@ -69,13 +71,13 @@ public class MainActivity extends BaseActivity {
     private void initMSAL() {
         AuthenticationHelper.setInstance(this, new AuthenticationHelper.IAuthenticationHelperCreatedListener() {
             @Override
-            public void onCreated(AuthenticationHelper authHelper) {
+            public void onCreated(IMultipleAccountPublicClientApplication multipleAccountApp) {
 
             }
 
             @Override
             public void onError(MsalException exception) {
-
+                ToastUtils.show("微软统一认证初始化失败");
             }
         });
     }

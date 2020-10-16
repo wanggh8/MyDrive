@@ -1,6 +1,7 @@
 package com.wanggh8.mydrive.bean;
 
 import com.microsoft.identity.client.IAccount;
+import com.wanggh8.mydrive.config.DriveType;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
@@ -114,5 +115,12 @@ public class DriveBean {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public DriveBean setDriveBean(IAccount account) {
+        name = account.getUsername();
+        type = DriveType.oneDrive.getTypeName();
+        iconId = DriveType.oneDrive.getTypeIconId();
+        id = account.getId();
     }
 }

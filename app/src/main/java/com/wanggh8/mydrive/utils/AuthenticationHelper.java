@@ -58,7 +58,7 @@ public class AuthenticationHelper {
     // 获取默认authority
     private String authority;
     // 权限范围
-    private String[] mScopes = { "User.Read", "Calendars.Read", "Files.ReadWrite.All" };
+    private String[] mScopes = { "User.Read", "Files.ReadWrite.All" };
 
     /**
      * 构造方法
@@ -72,9 +72,8 @@ public class AuthenticationHelper {
                     @Override
                     public void onCreated(IMultipleAccountPublicClientApplication application) {
                         mMultipleAccountApp = application;
-
                         authority = mMultipleAccountApp.getConfiguration().getDefaultAuthority().getAuthorityURL().toString();
-                        listener.onCreated(INSTANCE);
+                        listener.onCreated(mMultipleAccountApp);
                     }
 
                     @Override
@@ -95,7 +94,9 @@ public class AuthenticationHelper {
         if (INSTANCE == null) {
             INSTANCE = new AuthenticationHelper(ctx, listener);
         } else {
-            listener.onCreated(INSTANCE);
+            if (mMultipleAccountApp != null) {
+                listener.onCreated(mMultipleAccountApp);
+            }
         }
     }
 
@@ -127,30 +128,14 @@ public class AuthenticationHelper {
     /**
      * 异步获取Account列表
      *
-     * @param listener LoadAccountListListener 获取Account列表回调
      */
-    public void loadAccounts(final LoadAccountListListener listener) {
+    public void loadAccounts(IPublicClientApplication.LoadAccountsCallback callback) {
         if (mMultipleAccountApp == null) {
-            return;
+            throw new IllegalStateException(
+                    "AuthenticationHelper has not been initialized");
         }
         // Async异步获取Account列表
-        mMultipleAccountApp.getAccounts(new IPublicClientApplication.LoadAccountsCallback() {
-            @Override
-            public void onTaskCompleted(final List<IAccount> result) {
-                accountList = result;
-                for (IAccount account : accountList) {
-                    SPManager.putObject(account.getId(), account);
-                }
-                listener.onSuccess(accountList);
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-                Log.d("MSAL", "Error load the Account list", exception);
-                onDealError(exception, true);
-                listener.onError(exception);
-            }
-        });
+        mMultipleAccountApp.getAccounts(callback);
     }
 
     /**
@@ -161,18 +146,6 @@ public class AuthenticationHelper {
         driveBeanList.clear();
         driveBeanList = DriveDBUtil.queryAll();
     }
-
-
-    public DriveBean setDriveBean(IAccount account) {
-        DriveBean driveBean = new DriveBean();
-        driveBean.setName(account.getUsername());
-        driveBean.setType(DriveType.oneDrive.getTypeName());
-        driveBean.setIconId(DriveType.oneDrive.getTypeIconId());
-        driveBean.setId(account.getId());
-        return driveBean;
-    }
-
-
 
     /**
      * 交互式获取token
@@ -415,9 +388,9 @@ public class AuthenticationHelper {
         /**
          * 创建成功回调
          *
-         * @param authHelper AuthenticationHelper实例
+         * @param multipleAccountApp IMultipleAccountPublicClientApplication实例
          */
-        void onCreated(final AuthenticationHelper authHelper);
+        void onCreated(final IMultipleAccountPublicClientApplication multipleAccountApp);
 
         void onError(final MsalException exception);
     }

@@ -23,14 +23,40 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+
+        release {
+            storeFile file("../gradle/debug.keystore")
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
     }
 
     buildTypes {
-        release {
+        debug {
+            //开发环境
+            buildConfigField "boolean", "ISLOGGER", "false"
+            buildConfigField "boolean", "ISLOGGERTOFILE", "false"
+            buildConfigField "boolean", "useNewSnoPrefix", "true"
+            buildConfigField "String", "baseUrl", "\"https://www.baidu.com/\""
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            zipAlignEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+        release {
+//            buildConfigField "boolean", "ISLOGGER", "false"
+//            buildConfigField "boolean", "ISLOGGERTOFILE", "false"
+//            buildConfigField "boolean", "useNewSnoPrefix", "true"
+            buildConfigField "String", "baseUrl", "\"https://www.baidu.com/\""
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

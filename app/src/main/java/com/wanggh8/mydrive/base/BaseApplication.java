@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Process;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,11 +15,20 @@ import androidx.annotation.Nullable;
 
 import com.hjq.toast.ToastUtils;
 import com.hjq.toast.style.ToastWhiteStyle;
+import com.microsoft.identity.client.IMultipleAccountPublicClientApplication;
+import com.microsoft.identity.client.exception.MsalException;
 import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.smtt.sdk.TbsDownloader;
 import com.tencent.smtt.sdk.TbsListener;
+import com.wanggh8.mydrive.BuildConfig;
+import com.wanggh8.mydrive.config.Constant;
 import com.wanggh8.mydrive.db.DaoMaster;
 import com.wanggh8.mydrive.db.DaoSession;
+import com.wanggh8.mydrive.utils.AuthenticationHelper;
+import com.wanggh8.mydrive.utils.CrashHandler;
+import com.wanggh8.netcore.logger.Logger;
+import com.wanggh8.netcore.net.NetHttpOperater;
+import com.wanggh8.netcore.service.CoreNetService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,13 +78,14 @@ public class BaseApplication extends Application implements Application.Activity
     @Override
     public void onCreate() {
         super.onCreate();
-//        catchCrashException();
+        catchCrashException();
         mActivityList = new ArrayList<>();
         // 全局管理Activity生命周期
         registerActivityLifecycleCallbacks(this);
         init();
-
     }
+
+
 
     private void init() {
         // Application中初始化Toast
@@ -82,6 +93,38 @@ public class BaseApplication extends Application implements Application.Activity
         // 初始化X5内核
         initX5();
         setDatabase();
+        // 初始化网络
+        initNetCore();
+    }
+
+    /**
+     * 运行时异常处理
+     */
+    private void catchCrashException() {
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
+    }
+
+    private void initNetCore() {
+        // 初始日志工具
+        Logger.initLogger(true, BuildConfig.ISLOGGERTOFILE);
+        Constant.BASE_HOST_URL = BuildConfig.baseUrl;
+
+        // 配置网络基本请求参数,支持配置URL、超时时间、HTTP HEADER
+        CoreNetService.getInstance().build(new NetHttpOperater.Builder()
+                .readTimeout(Constant.READ_TIME_OUT)
+                .connectTimeout(Constant.REQUEST_TIME_OUT)
+                .writeTimeout(Constant.WRITE_TIME_OUT)
+                .addHeader("Content-Type", "application/json; charset=UTF-8")
+                .addHeader("Accept-Encoding", "gzip, deflate")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("Accept", "*/*")
+                .baseUrl(Constant.BASE_HOST_URL)
+                .encrypt(false)
+        );
+        // 添加token
+        // if (!TextUtils.isEmpty(getToken()))
+        // CoreNetService.getInstance().build().addHeader("token", getToken());
     }
 
     /**
@@ -183,14 +226,6 @@ public class BaseApplication extends Application implements Application.Activity
     public void setInitX5(boolean initX5) {
         this.initX5 = initX5;
     }
-
-    /**
-     * caughtException处理
-     */
-    private void catchCrashException() {
-//        CrashHandler crashHandler = CrashHandler.getInstance();
-//        crashHandler.init(getApplicationContext());
-    }
     
     /* * * * * * * * Activity管理 * * * * * * * */
 
@@ -219,6 +254,7 @@ public class BaseApplication extends Application implements Application.Activity
             activity.finish();
         }
     }
+
 
     /**
      * 移除除本身外其他Activity
