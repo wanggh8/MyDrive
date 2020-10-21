@@ -70,6 +70,12 @@ public class DriveDBUtil {
         return UNDO;
     }
 
+    /**
+     * 根据id删除
+     *
+     * @param id String
+     * @return int
+     */
     public static int deleteById(String id){
         DriveBean bean = queryById(id);
         if(bean != null){
@@ -78,6 +84,7 @@ public class DriveDBUtil {
         }
         return UNDO;
     }
+
 
     /**
      * 查询是否存在

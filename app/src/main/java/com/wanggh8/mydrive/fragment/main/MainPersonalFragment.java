@@ -68,7 +68,7 @@ public class MainPersonalFragment extends BaseFragment implements Authentication
     // 已连接网盘列表
     private List<DriveBean> driveBeanList = new ArrayList<>();
 
-    private AuthenticationContract.Presenter msalPresenter;
+    private AuthenticationContract.Presenter authPresenter;
 
     @Override
     public int getContentLayout() {
@@ -77,30 +77,10 @@ public class MainPersonalFragment extends BaseFragment implements Authentication
 
     @Override
     public void beforeInitView() {
-        msalPresenter = new AuthenticationPresenter(mContext, this);
+        authPresenter = new AuthenticationPresenter(mContext, this);
         initNewDriveList();
-        initOneDriveList();
     }
 
-    private void initOneDriveList() {
-        driveBeanList.clear();
-        AuthenticationHelper.getInstance().loadDriveList();
-        driveBeanList = AuthenticationHelper.getInstance().getDriveBeanList();
-        if (driveAdapter != null) {
-            driveAdapter.setCollection(driveBeanList);
-        }
-        AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
-            @Override
-            public void onSuccess(List<IAccount> accounts) {
-                accountList = accounts;
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-
-            }
-        });
-    }
 
     private void initNewDriveList() {
         if (newDriveList.isEmpty()) {
@@ -177,7 +157,7 @@ public class MainPersonalFragment extends BaseFragment implements Authentication
                     if (menuPosition == 0) {
 
                     } else if (menuPosition == 1) {
-                        oneDriveSignOut(driveAdapter.getItem(adapterPosition).getId());
+                        authPresenter.removeAccountById(driveAdapter.getItem(adapterPosition).getId(), driveAdapter.getItem(adapterPosition).getType());
                     }
                 }
                 if (direction == SwipeRecyclerView.LEFT_DIRECTION) {
@@ -188,8 +168,8 @@ public class MainPersonalFragment extends BaseFragment implements Authentication
 
         driveAdapter = new DriveAdapter(mContext);
         rvDriveList.setLayoutManager(new LinearLayoutManager(mContext));
-        driveAdapter.setCollection(driveBeanList);
         rvDriveList.setAdapter(driveAdapter);
+        authPresenter.getDriveList(false);
     }
 
     @Override
@@ -200,7 +180,7 @@ public class MainPersonalFragment extends BaseFragment implements Authentication
                 public void onSelect(String selected, int position) {
                     switch (selected) {
                         case "OneDrive":
-                            oneDriveSignIn();
+                            authPresenter.addAccount(getActivity(), "OneDrive");
                             break;
                         case "Google Drive":
                             ToastUtils.show("暂未支持");
@@ -220,116 +200,53 @@ public class MainPersonalFragment extends BaseFragment implements Authentication
         });
     }
 
-    private void oneDriveSignIn() {
-        AuthenticationHelper.getInstance().acquireTokenInteractively(getActivity(), new AuthenticationHelper.AcquireTokenCallback() {
-            @Override
-            public void onSuccess(IAuthenticationResult authenticationResult) {
-                AuthenticationHelper.getInstance().setIAuthenticationResult(authenticationResult);
-                loadAccountFormNet();
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-
-            }
-        });
-    }
-
-    private void loadAccountFormNet() {
-        AuthenticationHelper.getInstance().loadAccounts(new AuthenticationHelper.LoadAccountListListener() {
-            @Override
-            public void onSuccess(List<IAccount> accountList) {
-                driveBeanList.clear();
-                for (IAccount account : accountList) {
-                    DriveBean bean = AuthenticationHelper.getInstance().setDriveBean(account);
-                    driveBeanList.add(bean);
-                    DriveDBUtil.update(bean);
-                }
-                initOneDriveList();
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-
-            }
-        });
-    }
-
-    private void oneDriveSignOut(String id) {
-
-        AuthenticationHelper.getInstance().removeAccount(id, new IMultipleAccountPublicClientApplication.RemoveAccountCallback() {
-            @Override
-            public void onRemoved() {
-                ToastUtils.show("删除");
-                DriveDBUtil.deleteById(id);
-                loadAccountFormNet();
-                ToastUtils.show("删除成功");
-            }
-
-            @Override
-            public void onError(@NonNull MsalException exception) {
-                if ("device_network_not_available".equals(exception.getErrorCode())) {
-                    ToastUtils.show("网络未连接");
-                } else {
-                    ToastUtils.show("删除失败");
-                }
-                Log.d(TAG, "onError: "+ exception.getMessage());
-            }
-        });
-    }
-
     @Override
     public void onClickEvent(View v) {
 
     }
 
+
     @Override
-    public void getDriveListSuccess() {
+    public void getDriveListSuccess(List<DriveBean> rsp) {
+        driveBeanList.clear();
+        driveBeanList = rsp;
+        if (driveAdapter != null) {
+            driveAdapter.setCollection(driveBeanList);
+        }
+    }
+
+    @Override
+    public void getDriveListFail(String msg, int code) {
 
     }
 
     @Override
-    public void getDriveListFail() {
+    public void getAccountByIdSuccess(IAccount rsp) {
 
     }
 
     @Override
-    public void getAccountListSuccess() {
-
-    }
-
-    @Override
-    public void getAccountListFail() {
-
-    }
-
-    @Override
-    public void getAccountByIdSuccess() {
-
-    }
-
-    @Override
-    public void getAccountByIdFail() {
+    public void getAccountByIdFail(String msg, int code) {
 
     }
 
     @Override
     public void addAccountSuccess() {
-
+        authPresenter.getDriveList(true);
     }
 
     @Override
-    public void addAccountFail() {
+    public void addAccountFail(String msg, int code) {
 
     }
 
     @Override
     public void removeAccountSuccess() {
-
+        authPresenter.getDriveList(false);
     }
 
     @Override
-    public void removeAccountFail() {
+    public void removeAccountFail(String msg, int code) {
 
     }
 }

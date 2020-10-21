@@ -14,6 +14,7 @@ import com.microsoft.identity.client.IAuthenticationResult;
 import com.microsoft.identity.client.IMultipleAccountPublicClientApplication;
 import com.microsoft.identity.client.IPublicClientApplication;
 import com.microsoft.identity.client.PublicClientApplication;
+import com.microsoft.identity.client.SilentAuthenticationCallback;
 import com.microsoft.identity.client.exception.MsalClientException;
 import com.microsoft.identity.client.exception.MsalException;
 import com.microsoft.identity.client.exception.MsalServiceException;
@@ -25,6 +26,13 @@ import com.wanggh8.mydrive.config.DriveType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.wanggh8.mydrive.config.Code.Client_ERROR;
+import static com.wanggh8.mydrive.config.Code.NEED_LOGIN;
+import static com.wanggh8.mydrive.config.Code.NETWORK_NOT_AVAILABLE;
+import static com.wanggh8.mydrive.config.Code.NO_CURRENT_ACCOUNT;
+import static com.wanggh8.mydrive.config.Code.OTHER_ERROR;
+import static com.wanggh8.mydrive.config.Code.SERVICE_ERROR;
+
 /**
  * 微软 MSAL 多用户认证工具
  * 单例类
@@ -35,20 +43,10 @@ import java.util.List;
  */
 public class AuthenticationHelper {
 
-    // 错误代码
-    public static int OTHER_ERROR = 0;
-    public static int NETWORK_NOT_AVAILABLE = 1;
-    public static int NO_CURRENT_ACCOUNT = 2;
-    public static int Client_ERROR = 3;
-    public static int SERVICE_ERROR = 4;
+
 
     private static AuthenticationHelper INSTANCE = null;
     private static IMultipleAccountPublicClientApplication mMultipleAccountApp = null;
-
-    // 用户列表
-    private List<IAccount> accountList = new ArrayList<>();
-    // DriveBean列表
-    private List<DriveBean> driveBeanList = new ArrayList<>();
 
     // 当前用户认证结果
     private IAuthenticationResult mIAuthenticationResult;
@@ -139,140 +137,32 @@ public class AuthenticationHelper {
     }
 
     /**
-     * 从本地加载网盘列表
-     *
-     */
-    public void loadDriveList() {
-        driveBeanList.clear();
-        driveBeanList = DriveDBUtil.queryAll();
-    }
-
-    /**
      * 交互式获取token
      *
      * @param activity Activity
      * @param callback AcquireTokenCallback
      */
-    public void acquireTokenInteractively(Activity activity, AcquireTokenCallback callback) {
-        mMultipleAccountApp.acquireToken(activity, mScopes, new AuthenticationCallback() {
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onSuccess(IAuthenticationResult authenticationResult) {
-                callback.onSuccess(authenticationResult);
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-                onDealError(exception, true);
-                callback.onError(exception);
-            }
-        });
+    public void acquireTokenInteractively(Activity activity, AuthenticationCallback callback) {
+        mMultipleAccountApp.acquireToken(activity, mScopes, callback);
     }
 
     /**
      * 静默式获取token
      *
-     * @param callback AcquireTokenCallback
+     * @param callback SilentAuthenticationCallback
      */
-    public void acquireTokenSilently(Activity activity, IAccount account, AcquireTokenCallback callback) {
-        mMultipleAccountApp.acquireTokenSilentAsync(mScopes, account, authority, new AuthenticationCallback() {
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onSuccess(IAuthenticationResult authenticationResult) {
-                callback.onSuccess(authenticationResult);
-
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-                if (exception instanceof MsalUiRequiredException) {
-                    Log.d("AUTH", "Interactive login required");
-                    // 静默登陆时需要重新显式登陆
-                    acquireTokenInteractively(activity, callback);
-
-                } else if (exception instanceof MsalClientException) {
-                    if ("device_network_not_available".equals(exception.getErrorCode())) {
-                        ToastUtils.show("网络未连接");
-                    } else if (exception.getErrorCode() == "no_current_account") {
-                        Log.d("AUTH", "No current account, interactive login required");
-                        // 静默登陆时需要重新显式登陆doInteractiveSignIn();
-                        // doInteractiveSignIn();
-                    } else {
-                        // Exception inside MSAL, more info inside MsalError.java
-                        Log.e("AUTH", "Client error authenticating", exception);
-                    }
-                } else if (exception instanceof MsalServiceException) {
-                    // Exception when communicating with the auth server, likely config issue
-                    Log.e("AUTH", "Service error authenticating", exception);
-                }
-                callback.onError(exception);
-            }
-        });
+    public void acquireTokenSilently(Activity activity, IAccount account, SilentAuthenticationCallback callback) {
+        mMultipleAccountApp.acquireTokenSilentAsync(mScopes, account, authority, callback);
     }
 
     /**
      * 删除用户
      *
-     * @param id
+     * @param account IAccount
      * @param callback
      */
-    public void removeAccount(String id, IMultipleAccountPublicClientApplication.RemoveAccountCallback callback)  {
-        mMultipleAccountApp.getAccount(id, new IMultipleAccountPublicClientApplication.GetAccountCallback() {
-            @Override
-            public void onTaskCompleted(IAccount result) {
-                mMultipleAccountApp.removeAccount(result, callback);
-            }
-
-            @Override
-            public void onError(MsalException exception) {
-
-                if ("device_network_not_available".equals(exception.getErrorCode())) {
-                    ToastUtils.show("网络未连接");
-                }
-                else {
-                    ToastUtils.show("获取用户失败");
-                }
-            }
-        });
-
-    }
-
-    /**
-     * 根据索引获取当前账户
-     *
-     * @param position 用户列表索引
-     * @return IAccount
-     */
-    public IAccount getAccount(int position) {
-        return accountList.get(position);
-    }
-
-    /**
-     * 根据索引获取当前账户
-     * 可获取当前内存中和sp中的IAccount
-     *
-     * @param id 网盘用户唯一索引id
-     * @return IAccount
-     */
-    public IAccount getAccountById(String id) {
-        for (IAccount account : accountList) {
-            if (id.equals(account.getId())) {
-                return account;
-            }
-        }
-        IAccount spAccount = SPManager.getObject(id, IAccount.class);
-        if (spAccount != null) {
-            return spAccount;
-        }
-        return null;
+    public void removeAccount(IAccount account, IMultipleAccountPublicClientApplication.RemoveAccountCallback callback)  {
+        mMultipleAccountApp.removeAccount(account, callback);
     }
 
     /**
@@ -281,26 +171,10 @@ public class AuthenticationHelper {
      * @param id 网盘用户唯一索引id
      * @param callback IMultipleAccountPublicClientApplication.GetAccountCallback
      */
-    public void getAccountByIdFromNet(String id, IMultipleAccountPublicClientApplication.GetAccountCallback callback) {
+    public void getAccountById(String id, IMultipleAccountPublicClientApplication.GetAccountCallback callback) {
         mMultipleAccountApp.getAccount(id, callback);
     }
 
-    /**
-     * 获取用户列表
-     *
-     * @return List<IAccount>
-     */
-    public List<IAccount> getAccountList() {
-        return accountList;
-    }
-
-    public List<DriveBean> getDriveBeanList() {
-        return driveBeanList;
-    }
-
-    public void setDriveBeanList(List<DriveBean> driveBeanList) {
-        this.driveBeanList = driveBeanList;
-    }
 
     /**
      * 获取当前认证结果
@@ -335,47 +209,27 @@ public class AuthenticationHelper {
      * 网络请求失败处理
      *
      * @param exception MsalException
-     * @param isToast 是否显示Toast
      * @return 错误代码
      * @see AuthenticationHelper
      */
-    public static int onDealError(MsalException exception, boolean isToast) {
-        if (!isToast) {
-            if (exception instanceof MsalClientException) {
-                if ("device_network_not_available".equals(exception.getErrorCode())) {
-                    ToastUtils.show("网络未连接");
-                    return NETWORK_NOT_AVAILABLE;
-                } else if (exception.getErrorCode() == "no_current_account") {
-                    Log.d("AUTH", "No current account, interactive login required");
-                    // 静默登陆时需要重新显式登陆doInteractiveSignIn();
-                    // doInteractiveSignIn();
-                    return NO_CURRENT_ACCOUNT;
-                } else {
-                    // Exception inside MSAL, more info inside MsalError.java
-                    Log.e("AUTH", "Client error authenticating", exception);
-                    return Client_ERROR;
-                }
-            } else if (exception instanceof MsalServiceException) {
-                // Exception when communicating with the auth server, likely config issue
-                Log.e("AUTH", "Service error authenticating", exception);
-                return SERVICE_ERROR;
+    public static int onDealError(MsalException exception) {
+        if (exception instanceof MsalUiRequiredException) {
+            Log.d("AUTH", "Interactive login required");
+            // 静默登陆时需要重新显式登陆
+            return NEED_LOGIN;
+        } else if (exception instanceof MsalClientException) {
+            if ("device_network_not_available".equals(exception.getErrorCode())) {
+                return NETWORK_NOT_AVAILABLE;
+            } else if (exception.getErrorCode() == "no_current_account") {
+                Log.d("AUTH", "No current account, interactive login required");
+                return NO_CURRENT_ACCOUNT;
+            } else {
+                Log.e("AUTH", "Client error authenticating", exception);
+                return Client_ERROR;
             }
-        }
-        else {
-            if (exception instanceof MsalClientException) {
-                if ("device_network_not_available".equals(exception.getErrorCode())) {
-                    return NETWORK_NOT_AVAILABLE;
-                } else if (exception.getErrorCode() == "no_current_account") {
-                    Log.d("AUTH", "No current account, interactive login required");
-                    return NO_CURRENT_ACCOUNT;
-                } else {
-                    Log.e("AUTH", "Client error authenticating", exception);
-                    return Client_ERROR;
-                }
-            } else if (exception instanceof MsalServiceException) {
-                Log.e("AUTH", "Service error authenticating", exception);
-                return SERVICE_ERROR;
-            }
+        } else if (exception instanceof MsalServiceException) {
+            Log.e("AUTH", "Service error authenticating", exception);
+            return SERVICE_ERROR;
         }
         return OTHER_ERROR;
     }
@@ -396,21 +250,6 @@ public class AuthenticationHelper {
     }
 
     /**
-     * 加载用户列表监听
-     */
-    public interface LoadAccountListListener {
-        /**
-         * 加载用户列表成功回调
-         * 可进行更新UI操作
-         *
-         * @param accountList 用户列表
-         */
-        void onSuccess(final List<IAccount> accountList);
-
-        void onError(final MsalException exception);
-    }
-
-    /**
      * 获取token监听回调
      */
     public interface AcquireTokenCallback {
@@ -419,7 +258,5 @@ public class AuthenticationHelper {
 
         void onError(final MsalException exception);
     }
-
-
 }
 

@@ -117,10 +117,11 @@ public class DriveBean {
         this.accessToken = accessToken;
     }
 
-    public DriveBean setDriveBean(IAccount account) {
+    public void setDriveBean(IAccount account) {
         name = account.getUsername();
         type = DriveType.oneDrive.getTypeName();
         iconId = DriveType.oneDrive.getTypeIconId();
         id = account.getId();
+
     }
 }

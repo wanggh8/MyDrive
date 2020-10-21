@@ -27,6 +27,5 @@
             android:id="@+id/rv_main_drive"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
-
     </com.andview.refreshview.XRefreshView>
 </LinearLayout>

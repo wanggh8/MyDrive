@@ -1,5 +1,12 @@
 package com.wanggh8.mydrive.contract;
 
+import android.app.Activity;
+
+import com.microsoft.identity.client.IAccount;
+import com.wanggh8.mydrive.bean.DriveBean;
+
+import java.util.List;
+
 /**
  * 微软统一认证
  *
@@ -11,36 +18,65 @@ public interface AuthenticationContract {
 
     interface View {
 
-        void getDriveListSuccess();
-        void getDriveListFail();
+        void getDriveListSuccess(List<DriveBean> rsp);
+        void getDriveListFail(String msg, int code);
 
-        void getAccountListSuccess();
-        void getAccountListFail();
-
-        void getAccountByIdSuccess();
-        void getAccountByIdFail();
+        void getAccountByIdSuccess(IAccount rsp);
+        void getAccountByIdFail(String msg, int code);
 
         void addAccountSuccess();
-        void addAccountFail();
+        void addAccountFail(String msg, int code);
 
         void removeAccountSuccess();
-        void removeAccountFail();
+        void removeAccountFail(String msg, int code);
     }
 
     interface Presenter {
 
-        void getDriveList();
+        /**
+         * 获取网盘列表
+         *
+         * @param fromNet 是否不读本地缓存直接拉取网络
+         */
+        void getDriveList(boolean fromNet);
 
-        void getAccountList();
+        /**
+         * 根据id获取用户
+         *
+         * @param id 用户id
+         * @param type 网盘类型
+         */
+        void getAccountById(String id, String type);
 
-        void getAccountById(String id);
+        /**
+         * 添加网盘
+         *
+         * @param activity 调用的Activity
+         * @param type 网盘类型
+         */
+        void addAccount(Activity activity, String type);
 
-        void addAccount();
+        /**
+         * 删除在线网盘
+         *
+         * @param id 用户id
+         * @param type 网盘类型
+         */
+        void removeAccountById(String id, String type);
 
-        void removeAccountById(String id);
-
+        /**
+         * 自定义网盘名
+         *
+         * @param id 网盘id
+         * @param myName 自定义网盘名
+         */
         void editDriveName(String id, String myName);
 
+        /**
+         * 获取网盘token
+         *
+         * @param id 网盘用户id
+         */
         void getAccessToken(String id);
     }
 }
