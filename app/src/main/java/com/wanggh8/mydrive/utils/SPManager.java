@@ -23,7 +23,7 @@ public class SPManager {
     public static SharedPreferences getInstance() {
         if (sharedPreferences == null) {
             sharedPreferences = BaseApplication.getAppContext()
-                    .getSharedPreferences("cloudNurse", Context.MODE_PRIVATE);
+                    .getSharedPreferences("MyDrive", Context.MODE_PRIVATE);
         }
         return sharedPreferences;
     }

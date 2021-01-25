@@ -99,6 +99,11 @@ public class MainDriveFragment extends BaseFragment implements AuthenticationCon
         xRefreshView = (XRefreshView) findViewById(R.id.xRefreshView);
         xRefreshView.setPullLoadEnable(false);
         xRefreshView.setPullRefreshEnable(true);
+        // 处理横向移动与XRefreshView的冲突
+        xRefreshView.setMoveForHorizontal(true);
+        // 禁用自动加载更多
+        xRefreshView.setAutoLoadMore(false);
+
         rvDriveList = (SwipeRecyclerView) findViewById(R.id.rv_main_drive);
 
         titleBar = (CommonTitleBar) findViewById(R.id.title_bar_main_drive);
@@ -122,6 +127,20 @@ public class MainDriveFragment extends BaseFragment implements AuthenticationCon
                 // 3. WRAP_CONTENT，自身高度，不推荐;
                 int height = ViewGroup.LayoutParams.MATCH_PARENT;
 
+//                SwipeMenuItem editItem = new SwipeMenuItem(mContext)
+//                        .setWidth(width)
+//                        .setHeight(height)
+//                        .setBackground(R.color.colorSwipeEdit)
+//                        .setText(R.string.edit);
+//                rightMenu.addMenuItem(editItem);
+
+                SwipeMenuItem setDefaultItem = new SwipeMenuItem(mContext)
+                        .setWidth(width)
+                        .setHeight(height)
+                        .setBackground(R.color.colorSwipeSetDefault)
+                        .setText(R.string.setDefault);
+                rightMenu.addMenuItem(setDefaultItem);
+
                 SwipeMenuItem editItem = new SwipeMenuItem(mContext)
                         .setWidth(width)
                         .setHeight(height)
@@ -129,26 +148,12 @@ public class MainDriveFragment extends BaseFragment implements AuthenticationCon
                         .setText(R.string.edit);
                 rightMenu.addMenuItem(editItem);
 
-//                SwipeMenuItem setDefaultItem = new SwipeMenuItem(mContext)
-//                        .setWidth(width)
-//                        .setHeight(height)
-//                        .setBackground(R.color.colorSwipeSetDefault)
-//                        .setText(R.string.setDefault);
-//                rightMenu.addMenuItem(setDefaultItem);
-//
-//                SwipeMenuItem editItem = new SwipeMenuItem(mContext)
-//                        .setWidth(width)
-//                        .setHeight(height)
-//                        .setBackground(R.color.colorSwipeEdit)
-//                        .setText(R.string.edit);
-//                rightMenu.addMenuItem(editItem);
-//
-//                SwipeMenuItem deleteItem = new SwipeMenuItem(mContext)
-//                        .setWidth(width)
-//                        .setHeight(height)
-//                        .setBackground(R.color.colorSwipeSetDelete)
-//                        .setText(R.string.delete);
-//                rightMenu.addMenuItem(deleteItem);
+                SwipeMenuItem deleteItem = new SwipeMenuItem(mContext)
+                        .setWidth(width)
+                        .setHeight(height)
+                        .setBackground(R.color.colorSwipeSetDelete)
+                        .setText(R.string.delete);
+                rightMenu.addMenuItem(deleteItem);
             }
         };
         rvDriveList.setAdapter(null);

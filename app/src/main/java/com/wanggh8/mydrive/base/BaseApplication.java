@@ -20,7 +20,6 @@ import com.microsoft.identity.client.exception.MsalException;
 import com.tencent.smtt.sdk.QbSdk;
 import com.tencent.smtt.sdk.TbsDownloader;
 import com.tencent.smtt.sdk.TbsListener;
-import com.wanggh8.mydrive.BuildConfig;
 import com.wanggh8.mydrive.config.Constant;
 import com.wanggh8.mydrive.db.DaoMaster;
 import com.wanggh8.mydrive.db.DaoSession;
@@ -107,8 +106,8 @@ public class BaseApplication extends Application implements Application.Activity
 
     private void initNetCore() {
         // 初始日志工具
-        Logger.initLogger(true, BuildConfig.ISLOGGERTOFILE);
-        Constant.BASE_HOST_URL = BuildConfig.baseUrl;
+//        Logger.initLogger(true, BuildConfig.ISLOGGERTOFILE);
+//        Constant.BASE_HOST_URL = BuildConfig.baseUrl;
 
         // 配置网络基本请求参数,支持配置URL、超时时间、HTTP HEADER
         CoreNetService.getInstance().build(new NetHttpOperater.Builder()
@@ -149,8 +148,10 @@ public class BaseApplication extends Application implements Application.Activity
         return db;
     }
 
-    
-    /* * * * * * * * 腾讯TBS X5内核加载 * * * * * * * */
+
+    // ------------------------------------------------------------------------
+    // 腾讯TBS X5内核加载
+    // ------------------------------------------------------------------------
 
     /**
      * 初始化X5内核
@@ -227,7 +228,9 @@ public class BaseApplication extends Application implements Application.Activity
         this.initX5 = initX5;
     }
     
-    /* * * * * * * * Activity管理 * * * * * * * */
+    // ------------------------------------------------------------------------
+    // Activity管理
+    // ------------------------------------------------------------------------
 
     /**
      * 添加activity
